@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>WebRTC</title>
+<style>
+body {
+    margin: 0;
+}
+
+div.container {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#myVideo {
+    width: 100%;
+}
+
+</style>
+</head>
+<body>
+    
+<script type="text/javascript">
+function startVideo(){
+    navigator.mediaDevices.getUserMedia({
+        audio: false,
+        video: { width: 1920, height: 1080 }
+    }).then(function(stream){
+        document.getElementById('myVideo').srcObject = stream;
+    });
+}
+
+startVideo();
+</script>
+
+<div class="container">
+    <video id="myVideo" autoplay></video>
+</div>
+
+</body>
+</html>
