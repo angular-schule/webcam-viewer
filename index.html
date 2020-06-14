@@ -22,10 +22,18 @@ div.container {
 <body>
     
 <script type="text/javascript">
+navigator.mediaDevices.enumerateDevices()
+    .then(devices => devices.filter(d => d.kind === 'videoinput'))
+    .then(devices => devices.map(d => d.label + ': ' + d.deviceId).join('\n'))
+    .then(console.log);
+
+const urlParams = new URLSearchParams(window.location.search);
+const deviceId = urlParams.get('deviceId');
+
 function startVideo(){
     navigator.mediaDevices.getUserMedia({
         audio: false,
-        video: { width: 1920, height: 1080 }
+        video: { width: 1920, height: 1080, deviceId }
     }).then(function(stream){
         document.getElementById('myVideo').srcObject = stream;
     });
