@@ -13,7 +13,7 @@ div.container {
     height: 100%;
 }
 
-#myVideo {
+video {
     width: 100%;
 }
 
@@ -22,9 +22,11 @@ div.container {
 <body>
     
 <script type="text/javascript">
+console.log('Use deviceId query param to request a specific device.');
+
 navigator.mediaDevices.enumerateDevices()
     .then(devices => devices.filter(d => d.kind === 'videoinput'))
-    .then(devices => devices.map(d => d.label + ': ' + d.deviceId).join('\n'))
+    .then(devices => devices.map(d => d.label + ': ' + d.deviceId).join('\n\n'))
     .then(console.log);
 
 const urlParams = new URLSearchParams(window.location.search);
@@ -34,16 +36,30 @@ function startVideo(){
     navigator.mediaDevices.getUserMedia({
         audio: false,
         video: { width: 1920, height: 1080, deviceId }
-    }).then(function(stream){
-        document.getElementById('myVideo').srcObject = stream;
+    }).then(stream => {
+        document.querySelector('video').srcObject = stream;
     });
+}
+
+function enterFullscreen() {
+    const element = document.documentElement;
+
+    if(element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    }
 }
 
 startVideo();
 </script>
 
 <div class="container">
-    <video id="myVideo" autoplay></video>
+    <video autoplay ondblclick="enterFullscreen()"></video>
 </div>
 
 </body>
