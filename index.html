@@ -25,17 +25,26 @@ video {
 console.log('Use deviceId query param to request a specific device.');
 
 navigator.mediaDevices.enumerateDevices()
-    .then(devices => devices.filter(d => d.kind === 'videoinput'))
-    .then(devices => devices.map(d => d.label + ': ' + d.deviceId).join('\n\n'))
+    .then(devices => devices.filter(d => d.kind === 'videoinput' || d.kind === 'audioinput'))
+    .then(devices => devices.map(d => {
+            return '[' + d.kind + '] ' + d.label + ': ' + d.deviceId;
+    }).join('\n\n'))
     .then(console.log);
 
 const urlParams = new URLSearchParams(window.location.search);
 const deviceId = urlParams.get('deviceId');
+const audioDeviceId = urlParams.get('audioDeviceId');
 
 function startVideo(){
     navigator.mediaDevices.getUserMedia({
-        audio: false,
-        video: { width: 1920, height: 1080, deviceId }
+        video: { width: 1920, height: 1080, deviceId: { exact: deviceId } },
+        audio: audioDeviceId ? {
+            deviceId: { exact: audioDeviceId },
+            autoGainControl: false,
+            echoCancellation: false,
+            googAutoGainControl: false,
+            noiseSuppression: false
+        } : false
     }).then(stream => {
         document.querySelector('video').srcObject = stream;
     });
