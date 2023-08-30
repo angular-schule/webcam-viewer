@@ -15,23 +15,33 @@ navigator.mediaDevices
   .then(console.log);
 
 const urlParams = new URLSearchParams(window.location.search);
-const deviceId = urlParams.get("deviceId");
+const videoDeviceId = urlParams.get("deviceId");
 const audioDeviceId = urlParams.get("audioDeviceId");
 
 function startVideo() {
+  const constraints = {
+    video: { width: 1920, height: 1080 },
+    audio: false,
+  };
+
+  if (videoDeviceId) {
+    constraints.video.deviceId = { exact: videoDeviceId };
+  }
+
+  if (audioDeviceId) {
+    constraints.audio = {
+      deviceId: { exact: audioDeviceId },
+      autoGainControl: false,
+      echoCancellation: false,
+      googAutoGainControl: false,
+      noiseSuppression: false,
+    };
+  }
+
+  console.log({ constraints });
+  
   navigator.mediaDevices
-    .getUserMedia({
-      video: { width: 1920, height: 1080, deviceId: { exact: deviceId } },
-      audio: audioDeviceId
-        ? {
-            deviceId: { exact: audioDeviceId },
-            autoGainControl: false,
-            echoCancellation: false,
-            googAutoGainControl: false,
-            noiseSuppression: false,
-          }
-        : false,
-    })
+    .getUserMedia(constraints)
     .then((stream) => {
       document.querySelector("video").srcObject = stream;
     });
