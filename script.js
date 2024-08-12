@@ -16,16 +16,26 @@ navigator.mediaDevices
 
 const urlParams = new URLSearchParams(window.location.search);
 const videoDeviceId = urlParams.get("deviceId");
+const videoDeviceLabelSearch = urlParams.get("deviceLabel");
 const audioDeviceId = urlParams.get("audioDeviceId");
 
-function startVideo() {
+async function startVideo() {
+  // find video device by label search
+  if (videoDeviceLabelSearch) {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const foundDevice = devices.find(d => d.label.includes(videoDeviceLabelSearch));
+
+  }
+
   const constraints = {
     video: { width: 1920, height: 1080 },
     audio: false,
   };
 
-  if (videoDeviceId) {
-    constraints.video.deviceId = { exact: videoDeviceId };
+  const finalVideoDeviceId = videoDeviceId || foundDevice.deviceId;
+
+  if (finalVideoDeviceId) {
+    constraints.video.deviceId = { exact: finalVideoDeviceId };
   }
 
   if (audioDeviceId) {
@@ -40,11 +50,8 @@ function startVideo() {
 
   console.log({ constraints });
   
-  navigator.mediaDevices
-    .getUserMedia(constraints)
-    .then((stream) => {
-      document.querySelector("video").srcObject = stream;
-    });
+  const stream = await navigator.mediaDevices.getUserMedia(constraints);
+  document.querySelector("video").srcObject = stream;
 }
 
 function enterFullscreen() {
