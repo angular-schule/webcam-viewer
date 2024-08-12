@@ -21,10 +21,10 @@ const audioDeviceId = urlParams.get("audioDeviceId");
 
 async function startVideo() {
   // find video device by label search
+  let foundDevice = null
   if (videoDeviceLabelSearch) {
     const devices = await navigator.mediaDevices.enumerateDevices();
-    const foundDevice = devices.find(d => d.label.includes(videoDeviceLabelSearch));
-
+    foundDevice = devices.find(d => d.label.includes(videoDeviceLabelSearch));
   }
 
   const constraints = {
