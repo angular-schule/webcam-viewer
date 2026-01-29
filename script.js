@@ -28,7 +28,7 @@ async function startVideo() {
   }
 
   const constraints = {
-    video: { width: 1920, height: 1080 },
+    video: { width: 1920, height: 1080, frameRate: { ideal: 50 } },
     audio: false,
   };
 
